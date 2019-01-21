@@ -71,6 +71,7 @@ func (h *Handle) addrHandle(link Link, addr *Addr, req *nl.NetlinkRequest) error
 	}
 	prefixlen, masklen := mask.Size()
 	msg.Prefixlen = uint8(prefixlen)
+	fmt.Printf("address prefixlen: %d\n", uint8(prefixlen))
 	req.AddData(msg)
 
 	var localAddrData []byte
@@ -114,8 +115,8 @@ func (h *Handle) addrHandle(link Link, addr *Addr, req *nl.NetlinkRequest) error
 				calcBroadcast[i] = localAddrData[i] | ^mask[i]
 			}
 			addr.Broadcast = calcBroadcast
+			req.AddData(nl.NewRtAttr(unix.IFA_BROADCAST, addr.Broadcast))
 		}
-		req.AddData(nl.NewRtAttr(unix.IFA_BROADCAST, addr.Broadcast))
 
 		if addr.Label != "" {
 			labelData := nl.NewRtAttr(unix.IFA_LABEL, nl.ZeroTerminated(addr.Label))
