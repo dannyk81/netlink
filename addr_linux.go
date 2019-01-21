@@ -108,7 +108,7 @@ func (h *Handle) addrHandle(link Link, addr *Addr, req *nl.NetlinkRequest) error
 	}
 
 	if family == FAMILY_V4 {
-		if addr.Broadcast == nil {
+		if addr.Broadcast == nil && uint8(prefixlen) < 31 {
 			calcBroadcast := make(net.IP, masklen/8)
 			for i := range localAddrData {
 				calcBroadcast[i] = localAddrData[i] | ^mask[i]
